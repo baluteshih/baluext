@@ -108,9 +108,15 @@ tree_edges custom_tree(int size, int type, int dis = 1, int base = 0) {
 }
 
 /*
-iterator type: std::map<Key, weight_type, Compare, Allocator>::const_iterator 
+iterator:
+typedef typename std::map<Key, weight_type, Compare, Allocator_map>::const_iterator iterator;
 */
-template<class Key, class weight_type = double, class Compare = std::less<Key>, class Allocator = std::allocator<Key>>
+template<
+class Key, 
+class weight_type = double, 
+class Compare = std::less<Key>, 
+class Allocator_map = std::allocator<Key>,
+class Allocator_pbds = std::allocator<char>>
 class weight_pool {
     template<class Node_CItr, class Node_Itr, class Cmp_Fn, class _Alloc>
     struct my_node_update {
@@ -158,16 +164,16 @@ class weight_pool {
             return Compare()(a.first, b.first);
         }
     };
-    __gnu_pbds::tree<std::pair<Key, weight_type>, __gnu_pbds::null_type, pair_compare, __gnu_pbds::rb_tree_tag, my_node_update> pool;
-    std::map<Key, weight_type, Compare, Allocator> pool_record;
+    __gnu_pbds::tree<std::pair<Key, weight_type>, __gnu_pbds::null_type, pair_compare, __gnu_pbds::rb_tree_tag, my_node_update, Allocator_pbds> pool;
+    std::map<Key, weight_type, Compare, Allocator_map> pool_record;
 public:
+    typedef typename std::map<Key, weight_type, Compare, Allocator_map>::const_iterator iterator;
     weight_pool(){}
-    weight_pool(std::map<Key, weight_type, Compare, Allocator> _pool_record): pool_record(_pool_record) {
+    weight_pool(std::map<Key, weight_type, Compare, Allocator_map> _pool_record): pool_record(_pool_record) {
         for (auto p : pool_record)
             insert(p.first, p.second);
     }
-    typename
-    std::map<Key, weight_type, Compare, Allocator>::const_iterator insert(const Key &key, const weight_type &value) {
+    iterator insert(const Key &key, const weight_type &value) {
         auto p = pool_record.find(key);
         if (p == pool_record.end())
             p = pool_record.insert(std::make_pair(key, 0)).first;
@@ -185,8 +191,7 @@ public:
         pool_record.erase(p);
         return 1;
     }
-    typename
-    std::map<Key, weight_type, Compare, Allocator>::const_iterator erase(typename std::map<Key, weight_type, Compare, Allocator>::const_iterator it) {
+    iterator erase(iterator it) {
         pool.erase(pool.lower_bound(*it));
         return pool_record.erase(it);
     }
@@ -200,19 +205,16 @@ public:
         pool.clear();
         pool_record.clear();
     }
-    typename
-    std::map<Key, weight_type, Compare, Allocator>::const_iterator begin() {
+    iterator begin() {
         return pool_record.begin(); 
     }
-    typename
-    std::map<Key, weight_type, Compare, Allocator>::const_iterator end() {
+    iterator end() {
         return pool_record.end(); 
     }
-    typename
-    std::map<Key, weight_type, Compare, Allocator>::const_iterator find(const Key &key) {
+    iterator find(const Key &key) {
         return pool_record.find(key); 
     }
-    void swap(weight_pool<Key, Compare, Allocator> &other) {
+    void swap(weight_pool<Key, Compare, Allocator_map, Allocator_pbds> &other) {
         pool.swap(other.pool);
         pool_record.swap(other.pool_record);
     }
