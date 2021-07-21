@@ -95,7 +95,7 @@ An iterator will be returned, which points to the element.
 size_t erase(const Key &key);
 ```
 
-Removes the element (if one exists) with the key equivalent to `key`. Will return the number of elements removed (0 or 1).
+Remove the element (if one exists) with the key equivalent to `key`. Will return the number of elements removed (0 or 1).
 
 #### next
 
