@@ -59,7 +59,7 @@ type0: no restriction
 type1: connect with rnd.next(std::max(0, i - dis), i - 1)
 type2: connect with rnd.next(0, std::min(dis - 1, i - 1))
 ```
-Note that when `type` not equal to 1 and 2, it is regraded as 0
+Notice that when `type` not equal to 1 and 2, it is regraded as 0
 
 An additional `base` will be directly added to each label.
 
@@ -77,7 +77,7 @@ class weight_pool;
 
 `weight_pool` is a data structure that can insert some elements into it with a specific weight. After then, `weight_pool` can return random elements, the higher the weight, the higher probability the element will be returned.
 
-By the way, `weight_pool` is a combination with `std::map` and `__gnu_pbds::tree`. Hence, you can see two types of `Allocator`. Note that the key for `__gnu_pbds::tree` is `std::pair<Key, weight_type>`.
+By the way, `weight_pool` is a combination with `std::map` and `__gnu_pbds::tree`. Hence, you can see two types of `Allocator`. Notice that the key for `__gnu_pbds::tree` is `std::pair<Key, weight_type>`.
 
 #### insert
 
