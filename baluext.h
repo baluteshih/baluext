@@ -88,7 +88,7 @@ std::vector<std::pair<int, int>> custom_tree(int size, int type, int dis = 1, in
 /*
 iterator type: std::map<Key, weight_type, Compare, Allocator>::iterator 
 */
-template<class Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key>, class weight_type = double>
+template<class Key, class weight_type = double, class Compare = std::less<Key>, class Allocator = std::allocator<Key>>
 class weight_pool {
     template<class Node_CItr, class Node_Itr, class Cmp_Fn, class _Alloc>
     struct my_node_update {
