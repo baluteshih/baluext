@@ -7,7 +7,7 @@ This project is an extension for the C++ implementation of the [testlib](https:/
 
 ### tree edges
 
-In `baluext.h`, the edge structure of a tree is define as,
+In `baluext.h`, the edge structure of a tree is defined as,
 ```cpp
 typedef std::vector<std::pair<int, int>> tree_edges;
 ```
