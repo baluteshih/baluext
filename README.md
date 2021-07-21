@@ -120,7 +120,7 @@ Some common functions such as `size()`, `empty()`, `swap()`, `clear()` are also 
 
 #### example
 
-```cpp=
+```cpp
 #include "testlib.h"
 #include "baluext.h"
 #include <iostream>
