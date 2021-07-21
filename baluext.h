@@ -11,7 +11,12 @@
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 
-void shuffle_edges(std::vector<std::pair<int, int>> &edges, int base = 0) {
+typedef std::vector<std::pair<int, int>> tree_edges;
+
+/*
+O(n)
+*/
+void shuffle_edges(tree_edges &edges, int base = 0) {
     shuffle(edges.begin(), edges.end());
     for (auto &e : edges) {
         if (rnd.next(0, 1))
@@ -22,15 +27,32 @@ void shuffle_edges(std::vector<std::pair<int, int>> &edges, int base = 0) {
 }
 
 /*
+O(nlogn)
+*/
+void relabel_edges(tree_edges &edges, int base = 0) {
+    std::vector<int> label;
+    for (auto &e : edges) {
+        label.push_back(e.first);
+        label.push_back(e.second);
+    }
+    std::sort(label.begin(), label.end());
+    label.resize(std::unique(label.begin(), label.end()) - label.begin());
+    for (auto &e : edges) {
+        e.first = std::lower_bound(label.begin(), label.end(), e.first) - label.begin() + base;
+        e.second = std::lower_bound(label.begin(), label.end(), e.second) - label.begin() + base;
+    }
+}
+
+/*
 convert from Prüfer sequence
 O(nlogn)
 */
-std::vector<std::pair<int, int>> uniform_tree(int size, int base = 0) {
+tree_edges uniform_tree(int size, int base = 0) {
     if (size <= 0)
         __testlib_fail("uniform_tree: size must greater then 0");
     if (size == 1)
         return {};
-    std::vector<std::pair<int, int>> rt;
+    tree_edges rt;
     std::vector<int> seq(size - 2), cnt(size, 0);
     std::priority_queue<int, std::vector<int>, std::greater<int>> leaves;
     std::pair<int, int> lst;
@@ -63,14 +85,14 @@ type2: connect with rnd.next(0, std::min(dis - 1, i - 1))
 Note that when type not equal to 1 and 2, it is regraded as 0
 O(n)
 */
-std::vector<std::pair<int, int>> custom_tree(int size, int type, int dis = 1, int base = 0) {
+tree_edges custom_tree(int size, int type, int dis = 1, int base = 0) {
     if (size <= 0)
         __testlib_fail("custom_tree: size must greater then 0");
     if ((type == 1 || type == 2) && dis <= 0)
         __testlib_fail("custom_tree: dis must greater then 0 when type is 1 or 2");
     if (size == 1)
         return {};
-    std::vector<std::pair<int, int>> rt;
+    tree_edges rt;
     std::vector<int> idx(size);
     std::iota(idx.begin(), idx.end(), 0);
     shuffle(idx.begin(), idx.end());
@@ -86,7 +108,7 @@ std::vector<std::pair<int, int>> custom_tree(int size, int type, int dis = 1, in
 }
 
 /*
-iterator type: std::map<Key, weight_type, Compare, Allocator>::iterator 
+iterator type: std::map<Key, weight_type, Compare, Allocator>::const_iterator 
 */
 template<class Key, class weight_type = double, class Compare = std::less<Key>, class Allocator = std::allocator<Key>>
 class weight_pool {
