@@ -70,8 +70,8 @@ template<
 typename Key, // Key type
 typename weight_type = double, // Weight type
 typename Compare = std::less<Key>, // Key comparison functor
-class Allocator_map = std::allocator<Key>, // An allocator type for std::map
-class Allocator_pbds = std::allocator<char>> // An allocator type for __gnu_pbds::tree
+typename Allocator_map = std::allocator<Key>, // An allocator type for std::map
+typename Allocator_pbds = std::allocator<char>> // An allocator type for __gnu_pbds::tree
 class weight_pool;
 ```
 
