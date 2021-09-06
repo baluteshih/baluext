@@ -11,12 +11,12 @@
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 
-typedef std::vector<std::pair<int, int>> tree_edges;
+typedef std::vector<std::pair<int, int>> Edges;
 
 /*
 O(n)
 */
-void shuffle_edges(tree_edges &edges, int base = 0) {
+void shuffle_edges(Edges &edges, int base = 0) {
     shuffle(edges.begin(), edges.end());
     for (auto &e : edges) {
         if (rnd.next(0, 1))
@@ -29,7 +29,7 @@ void shuffle_edges(tree_edges &edges, int base = 0) {
 /*
 O(nlogn)
 */
-void relabel_edges(tree_edges &edges, int base = 0) {
+void relabel_edges(Edges &edges, int base = 0) {
     std::vector<int> label;
     for (auto &e : edges) {
         label.push_back(e.first);
@@ -47,12 +47,12 @@ void relabel_edges(tree_edges &edges, int base = 0) {
 convert from Prüfer sequence
 O(nlogn)
 */
-tree_edges uniform_tree(int size, int base = 0) {
+Edges uniform_tree(int size, int base = 0) {
     if (size <= 0)
         __testlib_fail("uniform_tree: size must greater then 0");
     if (size == 1)
         return {};
-    tree_edges rt;
+    Edges rt;
     std::vector<int> seq(size - 2), cnt(size, 0);
     std::priority_queue<int, std::vector<int>, std::greater<int>> leaves;
     std::pair<int, int> lst;
@@ -85,14 +85,14 @@ type2: connect with rnd.next(0, std::min(dis - 1, i - 1))
 Note that when type not equal to 1 and 2, it is regraded as 0
 O(n)
 */
-tree_edges custom_tree(int size, int type, int dis = 1, int base = 0) {
+Edges custom_tree(int size, int type, int dis = 1, int base = 0) {
     if (size <= 0)
         __testlib_fail("custom_tree: size must greater then 0");
     if ((type == 1 || type == 2) && dis <= 0)
         __testlib_fail("custom_tree: dis must greater then 0 when type is 1 or 2");
     if (size == 1)
         return {};
-    tree_edges rt;
+    Edges rt;
     std::vector<int> idx(size);
     std::iota(idx.begin(), idx.end(), 0);
     shuffle(idx.begin(), idx.end());
@@ -106,6 +106,8 @@ tree_edges custom_tree(int size, int type, int dis = 1, int base = 0) {
     shuffle_edges(rt, base);
     return rt;
 }
+
+
 
 /*
 iterator:

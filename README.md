@@ -5,18 +5,18 @@ This project is an extension for the C++ implementation of the [testlib](https:/
 
 ## Sample
 
-### tree edges
+### edges
 
-In `baluext.h`, the edge structure of a tree is defined as,
+In `baluext.h`, the edge structure of a graph is defined as,
 ```cpp
-typedef std::vector<std::pair<int, int>> tree_edges;
+typedef std::vector<std::pair<int, int>> Edges;
 ```
-Relatively, all of the trees will be expressed as a set of "edges".
+Relatively, all of the graphs will be expressed as a set of "edges".
 
 #### shuffle_edges
 
 ```cpp
-void shuffle_edges(tree_edges &edges, int base = 0);
+void shuffle_edges(Edges &edges, int base = 0);
 ```
 
 Shuffle the order of edges, also randomly swap the "first" and "second" of each pair.
@@ -26,7 +26,7 @@ An additional `base` will be directly added to each label.
 #### relabel_edges
 
 ```cpp
-void relabel_edges(tree_edges &edges, int base = 0);
+void relabel_edges(Edges &edges, int base = 0);
 ```
 
 Relabel the labels of the edges with 0-base.
@@ -35,12 +35,12 @@ An additional `base` will be directly added to each label.
 
 ### Trees
 
-`baluext.h` supports generating trees.
+`baluext.h` supports generating trees. A tree with size N will be expressed as an `Edges` structure with N-1 edges.
 
 #### uniform_tree
 
 ```cpp
-tree_edges uniform_tree(int size, int base = 0);
+Edges uniform_tree(int size, int base = 0);
 ```
 
 Use the Prüfer sequence to generate a tree with `size` nodes. Each tree will be generated with the same probability.
@@ -50,7 +50,7 @@ An additional `base` will be directly added to each label.
 #### custom_tree
 
 ```cpp
-tree_edges custom_tree(int size, int type, int dis = 1, int base = 0);
+Edges custom_tree(int size, int type, int dis = 1, int base = 0);
 ```
 
 Shuffle the nodes and connect one from prefix for each node, for each node:
