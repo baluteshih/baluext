@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <numeric>
 #include <map>
+#include <set>
+#include <functional>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 
@@ -107,7 +109,115 @@ Edges custom_tree(int size, int type, int dis = 1, int base = 0) {
     return rt;
 }
 
+/*
+Generate a simple bipartite graph
+Caller should provide "std::vector<int> colors" to store the color of the nodes in the generated graph
+Also, if the size of colors is greater than of equal to base + size, either colors[i] is 0 or 1 wil be regarded as the default color of node i, otherwise colors[i] for all i in [base, base + size) will be covered (and others will be remained); if the size of colors is smaller than base + size, it will be resize to base + size
+Caller can also optionally provide an edges base
+Note: edge_num will be automatically decrease if it exceeds the limits
+*/
+Edges bipartite_graph(int size, int edge_num, std::vector<int> &colors, int base = 0, const Edges &base_edges = Edges(), double prob = 0.5) {
+    std::vector<std::vector<int>> G(base + size, std::vector<int>());
+    for (const auto &e : base_edges) {
+        if (e.first < base || e.first >= base + size)
+            __testlib_fail("bipartite_graph: there is a nodes' label in base_edges not in the range [base, base + size).");
+        if (e.second < base || e.second >= base + size)
+            __testlib_fail("bipartite_graph: there is a node's label in base_edges not in the range [base, base + size).");
+        G[e.first].push_back(e.second);
+        G[e.second].push_back(e.first);
+    }
+    std::vector<int> vis(base + size, 0);
+    if (int(colors.size()) < base + size)
+        colors.resize(base + size, -1);
+    std::function<int(int)> dfs;
+    dfs = [&](int u) {
+        vis[u] = 1;
+        for (int i : G[u]) {
+            if (!vis[i]) {
+                if (!(colors[i] == 0 || colors[i] == 1))
+                    colors[i] = 1 - colors[u]; 
+                if (!dfs(i))
+                    return 0;
+            }
+            if (colors[i] == colors[u])
+                return 0;
+        }
+        return 1;
+    };
+    for (int i = base; i < base + size; ++i)
+        if (!vis[i] && (colors[i] == 0 || colors[i] == 1)) {
+            if (!dfs(i))
+                __testlib_fail("bipartite_graph: base_edges is not a bipartite graph or it conflicts with the colors");
+        }
+    for (int i = base; i < base + size; ++i)
+        if (!(colors[i] == 0 || colors[i] == 1)) {
+            if (rnd.next((double)0, (double)1) < prob)
+                colors[i] = 0;
+            else
+                colors[i] = 1;
+            if (!dfs(i))
+                __testlib_fail("bipartite_graph: base_edges is not a bipartite graph or it conflicts with the colors");
+        }
+    std::vector<int> black, white;
+    for (int i = base; i < base + size; ++i)
+        if (colors[i] == 0)
+            black.push_back(i);
+        else
+            white.push_back(i);
+    Edges rt(base_edges);
+    std::set<std::pair<int, int>> edge_vis;
+    for (auto &e : rt) {
+        if (e.first > e.second)
+            std::swap(e.first, e.second);
+        edge_vis.insert(e);
+    }
+    edge_num = std::min((long long)edge_num, (long long)black.size() * (long long)white.size());
+    edge_num -= base_edges.size();
+    if ((long long)black.size() * white.size() - (edge_num + base_edges.size()) <= 10000000) {
+        std::vector<std::pair<int, int>> edge_pool;
+        for (int i : black)
+            for (int j : white) {
+                int a = std::min(i, j);
+                int b = std::max(i, j);
+                if (edge_vis.find(std::make_pair(a, b)) == edge_vis.end())
+                    edge_pool.push_back(std::make_pair(a, b));
+            }
+        shuffle(edge_pool.begin(), edge_pool.end());
+        for (int i = 0; i < edge_num; ++i)
+            rt.push_back(edge_pool[i]);
+    }
+    else {
+        for (int i = 0; i < edge_num; ++i) {
+            int a, b;
+            do {
+                a = black[rnd.next(0, int(black.size()) - 1)];
+                b = white[rnd.next(0, int(white.size()) - 1)];
+                if (a > b)
+                    std::swap(a, b);
+            } while (edge_vis.find(std::make_pair(a, b)) != edge_vis.end());
+            edge_vis.insert(std::make_pair(a, b));
+            rt.push_back(std::make_pair(a, b));
+        } 
+    }
+    shuffle_edges(rt);
+    return rt;
+}
 
+/*
+TODO
+*/
+Edges Cactus_edge() {
+    __testlib_fail("Cactus_edge: This function hasn't been finished");
+    return Edges(); 
+}
+
+/*
+TODO
+*/
+Edges Cactus_vertex() {
+    __testlib_fail("Cactus_edge: This function hasn't been finished");
+    return Edges(); 
+}
 
 /*
 iterator:
